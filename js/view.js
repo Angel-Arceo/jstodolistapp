@@ -6,19 +6,23 @@ export default class View {
         this.model = null;
 
         this.addButton.onclick = () => {
-            this.getTodos();    
+            this.addTodos();    
         }
     }
 
 
-    getTodos() {
+    addTodos() {
         if(this.title.value === '' || this.description.value === '') {
             console.log('Please fill in all fields');
             return;
         }
-        console.log('Getting todos');
+        console.log('Adding todos');
 
         console.log(this.title.value);
         console.log(this.description.value);
+    }
+
+    setModel(model) {
+        this.model = model;
     }
 }
