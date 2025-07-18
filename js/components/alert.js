@@ -1,6 +1,6 @@
 export default class Alert {
-    constructor() {
-        this.alert = document.getElementById('alert');
+    constructor(alertId) {
+        this.alert = document.getElementById(alertId);
     }
 
     show(message) {
