@@ -1,4 +1,4 @@
-import { getDatabase, set, ref, onValue, push } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js"
+import { getDatabase, set, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js"
 
 export default class Model {
     constructor() {
@@ -24,7 +24,17 @@ export default class Model {
 
 
     }
+    async removeTodos(key) {
+        // Logic to remove a todo item
+        const todosId = key.substring(1)
+        const refRemove = ref(this.db, `todos/${todosId}`); 
+        try {
+            await remove(refRemove)
+        } catch (error) {
+            return 'Error removing todo:', error;
+        }
 
+    }
     getTodos(callback) {
         // Logic to get all todo items
         const todosRef = ref(this.db, 'todos/');
