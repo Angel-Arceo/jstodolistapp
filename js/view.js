@@ -1,5 +1,6 @@
 import Alert from './components/alert.js';
-
+import Modal from './components/modal.js';
+import ClickEvent from './components/click.js';
 
 export default class View {
     constructor() {
@@ -9,7 +10,17 @@ export default class View {
         this.addButton = document.getElementById('add');
         this.table = document.getElementById('table');
 
+
+
         this.alert = new Alert('alert');
+        this.modal = new Modal()
+        this.clickEvent = new ClickEvent();
+   
+        // Set up event listeners
+        this.modal.onClick((key, todo) => { 
+          this.model.editTodos(key, todo.title, todo.description);
+        });
+
 
         this.addButton.onclick = () => {
             this.addTodos()
@@ -48,7 +59,7 @@ export default class View {
                 ${todo.description}
               </td>
               <td class="text-center">
-                <input type="checkbox">
+                <input type="checkbox" id="checked${key}">
               </td>
               <td class="text-right">
                 <button class="btn btn-primary mb-1" id="e${key}">
@@ -60,31 +71,59 @@ export default class View {
               </td>
             </tr>`
 
+
+
+        
+
+        tbody.insertAdjacentHTML('beforeend', row);
+
+        
+        this.toggleCompleted(todo, key)
         this.removeTodos();
-        tbody.innerHTML += row
+        this.editTodo();
+
+        
+
+
     }
 
-    
+    editTodo() {
+      this.clickEvent.onClick(async (key) => {
+          const todo = await this.model.getTodo(key);
+          console.log('btn clicked', key)
+          this.modal.setValues(key, todo);
+
+          $('#modal').modal('toggle');
+
+      }, 'btn-primary', 'fa-pencil');
+    }
+
+    toggleCompleted(todo, key) {
+      const checkbox = document.getElementById(`checked${key}`);
+
+
+      if(!checkbox) return;
+
+      checkbox.checked = todo.completed;
+
+      checkbox.onclick = () => {
+        console.log('Checkbox clicked:', checkbox.checked);
+        this.model.toggleCompleted(key, todo);
+      }
+    }
     /**
      * Remove todos from the table
      */
     removeTodos() {
-      document.addEventListener('click', (event) => {
-        if ((event.target && event.target.classList.contains('btn-danger'))) {
-          const key = event.target.id;
-          console.log('Removing todo with key:', key);
-          this.model.removeTodos(key);
-        }
 
-        if((event.target && event.target.classList.contains('fa-trash'))) {
-            const key = event.target.parentElement.id;
-            console.log('Removing todo with key:', key);
-            this.model.removeTodos(key);
-        }
-      });
 
+      this.clickEvent.onClick((key) => {
+        console.log('Removing todo with key:', key);
+        this.model.removeTodos(key);
+      }, 'btn-danger', 'fa-trash');
         
     }
+    
     addTodos() {
         if(this.title.value === '' || this.description.value === '') {
             this.alert.show('Please fill in all fields');
@@ -96,7 +135,7 @@ export default class View {
 
         console.log(this.title.value);
         console.log(this.description.value);
-        this.model.addTodo(this.title.value, this.description.value);
+        this.model.addTodo(this.title.value, this.description.value, false);
         
     }
 
