@@ -22,7 +22,14 @@ export default class Modal {
     }
 
     onClick(callback) {
+
+
         this.saveButton.onclick = () => {
+            if(this.title.value === '' || this.description.value === '') {
+                this.alert.show('Please fill in all fields');
+                return;
+            }
+            this.alert.hide();
             
             $('#modal').modal('toggle');
 

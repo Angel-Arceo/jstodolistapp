@@ -44,9 +44,18 @@ export default class Model {
 
     }
 
-    editTodos(key, title, description) {
+    editTodos(key, todo) {
         // Logic to edit a todo item  
-        console.log(`Todo edited: ${key} - ${title} - ${description}`);
+        const todosId = key.substring(1)
+
+        const updates = {};
+
+        updates[`todos/${todosId}`] = {
+            ...todo,
+        }
+
+        update(ref(this.db), updates);
+        console.log(`Todo edited: ${key} - ${todo.title} - ${todo.description}`);
     }
 
     getTodos(callback) {

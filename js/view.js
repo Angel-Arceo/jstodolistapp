@@ -18,7 +18,7 @@ export default class View {
    
         // Set up event listeners
         this.modal.onClick((key, todo) => { 
-          this.model.editTodos(key, todo.title, todo.description);
+          this.model.editTodos(key, todo);
         });
 
 
