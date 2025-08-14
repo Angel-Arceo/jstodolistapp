@@ -1,6 +1,7 @@
 import Alert from './components/alert.js';
 import Modal from './components/modal.js';
 import ClickEvent from './components/click.js';
+import filter from './components/filter.js';
 
 export default class View {
     constructor() {
@@ -15,12 +16,14 @@ export default class View {
         this.alert = new Alert('alert');
         this.modal = new Modal()
         this.clickEvent = new ClickEvent();
+        this.filter = new filter();
    
         // Set up event listeners
         this.modal.onClick((key, todo) => { 
           this.model.editTodos(key, todo);
         });
 
+        this.filter.onClick((formData) => this.filterTodos(formData))
 
         this.addButton.onclick = () => {
             this.addTodos()
@@ -51,7 +54,7 @@ export default class View {
         
 
         const row = `
-            <tr>
+            <tr id="${key}">
               <td>
                 ${todo.title}
               </td>
@@ -62,10 +65,10 @@ export default class View {
                 <input type="checkbox" id="checked${key}">
               </td>
               <td class="text-right">
-                <button class="btn btn-primary mb-1" id="e${key}">
+                <button class="btn btn-primary mb-1" id="e${key}" title="edit todo">
                   <i class="fa fa-pencil"></i>
                 </button>
-                <button class="btn btn-danger mb-1 ml-1" id="r${key}">
+                <button class="btn btn-danger mb-1 ml-1" id="r${key}" title="remove todo">
                   <i class="fa fa-trash"></i>
                 </button>
               </td>
@@ -124,6 +127,76 @@ export default class View {
         
     }
     
+    filterTodos(filters) {
+        const { words, type } = filters;
+        const [, ...rows] = this.table.getElementsByTagName('tr');
+
+
+        rows.forEach(row => {
+          const [ title, description, status ] = row.getElementsByTagName('td');
+          let shouldHide = false;
+
+
+
+          if(words) {
+            shouldHide = !title.textContent.includes(words) || !description.textContent.includes(words);
+          }
+          const statusCell = status.children[0].checked;
+
+
+          //                  falso            true
+          if(type !== 'all' && statusCell !== (type === 'completed')) {
+            shouldHide = true;
+          }
+
+          console.log(shouldHide)
+
+          if(shouldHide) {
+            row.classList.add('d-none');
+          }else {
+            row.classList.remove('d-none');
+          }
+
+        });
+
+        /*const filteredRows = rows.filter(row => {
+          const [ title, description, status ] = row.getElementsByTagName('td');
+          const titleCell = title.textContent.toLowerCase();
+          const descriptionCell = description.textContent.toLowerCase();
+          const statusCell = status.children[0].checked;
+
+
+
+        });
+
+        /*const filteredRows = rows.filter(row => {
+          const [ title, description, status ] = row.getElementsByTagName('td');
+          const titleCell = title.textContent.toLowerCase();
+          const descriptionCell = description.textContent.toLowerCase();
+          const statusCell = status.children[0].checked;
+          
+
+          if(words) {
+            shouldHide = !titleCell.includes(lowerWords) && !descriptionCell.includes(lowerWords);
+          }
+          const lowerWords = words.toLowerCase();
+          const lowerType = type.toLowerCase();
+
+
+          const isWords = titleCellText.includes(lowerWords) || descCellText.includes(lowerWords);
+          const isType = statusCellVal === (lowerType === 'completed');
+
+          return !(isWords && isType);
+
+        })
+
+        filteredRows.forEach(row => {
+            const hiddenRow = document.getElementById(row.id)
+
+            if
+            hiddenRow.classList.add('d-none')
+        }); */
+    }  
     addTodos() {
         if(this.title.value === '' || this.description.value === '') {
             this.alert.show('Please fill in all fields');

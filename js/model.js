@@ -5,7 +5,10 @@ import { getDatabase,
     push, 
     remove, 
     update, 
-    get } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js"
+    get,
+    query, 
+    orderByChild,
+    equalTo } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js"
 
 export default class Model {
     constructor() {
@@ -79,6 +82,23 @@ export default class Model {
         const snapshot = await get(todoRef);
         return snapshot.val();
     }
+
+    /** async filterTodos(type, words) {
+        // Logic to filter todo items
+        console.log(`Filtering todos by type: ${type} and words: ${words}`);
+
+        const todos = query(this.todosRef, orderByChild('title'), equalTo(words));
+        
+        const snapshot = await get(todos);
+        const data = snapshot.val();
+
+
+        if(data) {
+            console.log(data)
+
+        }
+        return;
+    } **/
 
     toggleCompleted(todosId, todo) {
         const updates = {};
